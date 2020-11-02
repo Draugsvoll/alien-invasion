@@ -270,7 +270,7 @@ function spawnEnemies () {
             y: Math.sin(triangulate) * speed
         }
         enemies.push(new Enemy(x, y, radius, color, angles))
-    }, 1500)
+    }, 1300)
 }
 
 
