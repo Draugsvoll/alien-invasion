@@ -6,10 +6,17 @@ const context = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
+const startGameBtn = document.querySelector('.start-game-btn')
+const modalEl = document.querySelector('.modal-container')
+const modalScore = document.querySelector('.modal-score')
+const scoreBox = document.querySelector(".scoreboard")
+const displayPoints = document.querySelector(".points")
+
+
 // console.log(canvas)
 // console.log(context)
-console.log('X-cordinate: ',canvas.width)
-console.log('Y-cordinate: ',canvas.height)
+//console.log('X-cordinate: ',canvas.width)
+//console.log('Y-cordinate: ',canvas.height)
 
 
 
@@ -32,6 +39,40 @@ class Player {
 const x = canvas.width/2
 const y = canvas.height/2
 const player = new Player (x, y, 20, 'white')
+
+
+//* STAR
+function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+    var rot = Math.PI / 2 * 3;
+    var x = cx;
+    var y = cy;
+    var step = Math.PI / spikes;
+
+    context.strokeSyle = "#000";
+    context.beginPath();
+    context.moveTo(cx, cy - outerRadius)
+    for (let i=0; i < spikes; i++) {
+        x = cx + Math.cos(rot) * outerRadius;
+        y = cy + Math.sin(rot) * outerRadius;
+        context.lineTo(x, y)
+        rot += step
+
+        x = cx + Math.cos(rot) * innerRadius;
+        y = cy + Math.sin(rot) * innerRadius;
+        context.lineTo(x, y)
+        rot += step
+    }
+    context.lineTo(cx, cy - outerRadius)
+    context.closePath();
+    context.lineWidth=5;
+    context.strokeStyle='skyblue';
+    context.stroke();
+    context.fillStyle='skyblue';
+    context.fill();
+
+}
+
+//drawStar(75, 100, 5, 30, 15);
 
 
 
@@ -155,8 +196,14 @@ function animate () {
 
         // end game
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
-        if ( dist - enemy.radius - player.radius < 1 ) cancelAnimationFrame(animationId)    
-
+        if ( dist - enemy.radius - player.radius < 1 ) {
+            cancelAnimationFrame(animationId)
+            modalEl.style.display = 'flex'
+            let endScore = scoreBox.innerHTML.split(' ')
+            modalScore.innerHTML = endScore[1]
+            displayPoints.innerHTML = "Points"
+            startGameBtn.innerHTML = "Restart"
+        }
         // collision detection
         projectiles.forEach( (projectile, projectileIndex) => {
             const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
@@ -181,14 +228,13 @@ function animate () {
         })
     })
 }
-animate()
 
 
 
 
 
-//* MOUSE-CLICK LISTENER
-window.addEventListener('click', (e) => {
+//* MOUSE CLICK LISTENER
+canvas.addEventListener('click', (e) => {
     // triangulate x,y cordinates
     const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
     // angles
@@ -202,12 +248,13 @@ window.addEventListener('click', (e) => {
 
 
 
-//* SPAWN-ENEMIES
+//* SPAWN ENEMIES
 function spawnEnemies () {
     setInterval(() => {
         const radius = Math.random() * ( 60  -15)+15
         var x = Math.random()
         var y = Math.random() 
+        let speed = Math.random() * 5 +1
        if ( Math.random() < 0.5 ) {
            x = Math.random() < 0.5 ? 0-radius : canvas.width+radius
            y = Math.random() * canvas.height
@@ -219,10 +266,25 @@ function spawnEnemies () {
                                        // towards the middle minus starting point
         const triangulate = Math.atan2(canvas.height/2 - y, canvas.width/2 - x)
         const angles = {
-            x: Math.cos(triangulate),
-            y: Math.sin(triangulate)
+            x: Math.cos(triangulate) * speed,
+            y: Math.sin(triangulate) * speed
         }
         enemies.push(new Enemy(x, y, radius, color, angles))
-    }, 1000)
+    }, 1500)
 }
-spawnEnemies()
+
+
+
+//* START GAME BUTTON
+startGameBtn.addEventListener('click', () => {
+    modalEl.style.display = 'none'
+    // clear old game
+    projectiles = []
+    enemies = []
+    scoreBox.innerHTML = 'Score: 0'
+
+    animate()
+    spawnEnemies()
+    
+})
+

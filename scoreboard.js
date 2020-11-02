@@ -10,5 +10,6 @@ function updateScore () {
 
 export default {
     scoreboard,
-    updateScore
+    updateScore,
+    score
 }
