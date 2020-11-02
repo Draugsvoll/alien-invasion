@@ -11,6 +11,16 @@ const modalEl = document.querySelector('.modal-container')
 const modalScore = document.querySelector('.modal-score')
 const scoreBox = document.querySelector(".scoreboard")
 const displayPoints = document.querySelector(".points")
+const resetBtn = document.querySelector(".reset")
+
+const imgEnemyPath = 'enemy.png'
+const imgPlayerPath = 'player.png'
+const enemyObj = new Image()
+const playerObj = new Image()
+
+enemyObj.src = imgEnemyPath
+playerObj.src = imgPlayerPath
+context.drawImage(enemyObj, 10, 10)
 
 
 // console.log(canvas)
@@ -30,50 +40,17 @@ class Player {
     }
 
     draw () {
-        context.beginPath()
-        context.arc( this.x, this.y, this.radius, 0, Math.PI * 2, false)
-        context.fillStyle = this.color
-        context.fill()
+        // context.beginPath()
+        // context.arc( this.x, this.y, this.radius, 0, Math.PI * 2, false)
+        // context.fillStyle = this.color
+        // context.fill()
+        playerObj.style.background = 'rgba(0,0,0, 0.1)'
+        context.drawImage(playerObj, this.x -35, this.y -35)
     }
 }
 const x = canvas.width/2
 const y = canvas.height/2
 const player = new Player (x, y, 20, 'white')
-
-
-//* STAR
-function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
-    var rot = Math.PI / 2 * 3;
-    var x = cx;
-    var y = cy;
-    var step = Math.PI / spikes;
-
-    context.strokeSyle = "#000";
-    context.beginPath();
-    context.moveTo(cx, cy - outerRadius)
-    for (let i=0; i < spikes; i++) {
-        x = cx + Math.cos(rot) * outerRadius;
-        y = cy + Math.sin(rot) * outerRadius;
-        context.lineTo(x, y)
-        rot += step
-
-        x = cx + Math.cos(rot) * innerRadius;
-        y = cy + Math.sin(rot) * innerRadius;
-        context.lineTo(x, y)
-        rot += step
-    }
-    context.lineTo(cx, cy - outerRadius)
-    context.closePath();
-    context.lineWidth=5;
-    context.strokeStyle='skyblue';
-    context.stroke();
-    context.fillStyle='skyblue';
-    context.fill();
-
-}
-
-//drawStar(75, 100, 5, 30, 15);
-
 
 
 //* ENEMEY CLASS
@@ -87,10 +64,12 @@ class Enemy {
     }
 
     draw () {
-        context.beginPath()
-        context.arc( this.x, this.y, this.radius, 0, Math.PI * 2, false)
-        context.fillStyle = this.color
-        context.fill()
+        // context.beginPath()
+        // context.arc( this.x, this.y, this.radius, 0, Math.PI * 2, false)
+        // context.fillStyle = this.color
+        // context.fill()
+        enemyObj.style.background = 'rgba(0,0,0, 0.1)'
+        context.drawImage(enemyObj, this.x, this.y)
     }
 
     update() {
@@ -197,7 +176,7 @@ function animate () {
         // end game
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
         if ( dist - enemy.radius - player.radius < 1 ) {
-            cancelAnimationFrame(animationId)
+            window.cancelAnimationFrame(animationId)
             modalEl.style.display = 'flex'
             let endScore = scoreBox.innerHTML.split(' ')
             modalScore.innerHTML = endScore[1]
@@ -213,17 +192,13 @@ function animate () {
                 for ( let i=0; i<enemy.radius; i++) {
                     particles.push( new Particle(projectile.x, projectile.y, 3, enemy.color, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
                 }
-                // shrink enemy before it removal
-                if ( enemy.radius - 10 > 18 ) {
-                    enemy.radius -= 10
-                }else {
-                    // use setTimeout makes it wait for next frame to remove
+            
                     setTimeout( () => {
                         enemies.splice( index, 1 )
                         projectiles.splice( projectileIndex, 1 )
                         scoreboard.updateScore()
                     },0)
-                }
+                
             }
         })
     })
@@ -250,8 +225,8 @@ canvas.addEventListener('click', (e) => {
 
 //* SPAWN ENEMIES
 function spawnEnemies () {
-    setInterval(() => {
-        const radius = Math.random() * ( 60  -15)+15
+    setInterval( () => {
+        const radius = Math.random() * ( 60 - 15 ) + 15
         var x = Math.random()
         var y = Math.random() 
         let speed = Math.random() * 5 +1
@@ -269,7 +244,7 @@ function spawnEnemies () {
             x: Math.cos(triangulate) * speed,
             y: Math.sin(triangulate) * speed
         }
-        enemies.push(new Enemy(x, y, radius, color, angles))
+        enemies.push(new Enemy(x, y, 50, color, angles))
     }, 1300)
 }
 
@@ -282,9 +257,13 @@ startGameBtn.addEventListener('click', () => {
     projectiles = []
     enemies = []
     scoreBox.innerHTML = 'Score: 0'
+    resetBtn.innerHTML = 'reset'
 
     animate()
     spawnEnemies()
-    
 })
 
+//* RESET BTN
+resetBtn.addEventListener('click', () => {
+    location.reload()
+})
