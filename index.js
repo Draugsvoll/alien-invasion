@@ -208,7 +208,7 @@ function animate () {
             if ( dist - enemy.radius - projectile.radius < 1) {
                 // create smaller particles at crash
                 for ( let i=0; i<10; i++) {
-                    particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
+                    particles.push( new Particle(projectile.x, projectile.y, 5, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
                 }
                     setTimeout( () => {
                         enemies.splice( index, 1 )
