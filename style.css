@@ -1,10 +1,65 @@
 *, body, html {
     margin: 0;
     padding:0;
+
+    background: black;
 } 
 
-.canvas {
-    display: flex;
+canvas {
     background: black;
 }
 
+.box {
+    display: flex;
+    justify-content: center;
+}
+
+.scoreboard {
+    position: fixed;
+    color: white;
+    font-size: 28px;
+    margin-left: 47%;
+    margin-top: 10px;
+    user-select: none;
+}
+
+.modal-container {
+    background: white;
+    position: fixed;
+    width: 25%;
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    color:white;
+    justify-content: center;
+    margin: auto;
+    
+}
+
+.modal {
+    background: white;
+    margin: auto;
+    padding: 10px;
+}
+
+button {
+    margin: 8px;
+    height: 30px;
+    width: 100px;
+    background: lightblue;
+    border: none;
+    border-radius: 8px;
+}
+
+h1 {
+    margin: 8px;
+
+    background: white;
+    color:black;
+}
+
+p {
+    background: white;
+    color:black;
+    margin: 8px;
+}

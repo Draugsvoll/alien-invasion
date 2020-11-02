@@ -4,13 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script defer src="index.js"></script>
+    <script src="scoreboard.js" type="module"></script>
+    <script defer src="index.js" type="module"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
     <title>Game</title>
 </head>
 <body>
-    
-    <canvas class="canvas" id="canvas"></canvas>
+
+    <!-- SCORE -->
+    <div class="scoreboard"></div>
+    <!-- MODAL -->
+    <div class="modal-container">
+            <div class="modal">
+                <h1>Score</h1>
+                <p>Points</p>
+                <button>Start Game</button>
+            </div>
+    </div>
+    <!-- CANVAS -->
+    <div class="box">
+        <canvas class="canvas" id="canvas"></canvas>
+    </div>
 
 </body>
 </html>
