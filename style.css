@@ -63,6 +63,7 @@ button {
     outline: none;
     font-size: 20px;
     margin-top: 20px;
+    user-select: none;
 }
 
 button:hover {
