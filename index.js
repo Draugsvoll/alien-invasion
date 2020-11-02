@@ -257,7 +257,7 @@ function spawnEnemies () {
         const radius = Math.random() * ( 60 - 15 ) + 15
         var x = Math.random()
         var y = Math.random() 
-        let speed = Math.random() * 4 + 1.5
+        let speed = Math.random() * 3.2 + 1.8
        if ( Math.random() < 0.5 ) {
            x = Math.random() < 0.5 ? 0-radius : canvas.width+radius
            y = Math.random() * canvas.height
