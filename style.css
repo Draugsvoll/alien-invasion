@@ -63,6 +63,7 @@ button {
     outline: none;
     font-size: 20px;
     margin-top: 20px;
+    user-select: none;
 }
 
 button:hover {
@@ -75,17 +76,20 @@ h1 {
     color:black;
     font-size: 36px;
     text-justify: center;
+    user-select: none;
 }
 
 p {
     background: white;
-    color:rgb(66, 64, 64);
+    color:rgb(56, 54, 54);
     margin: auto;
+    user-select: none;
 }
 
 .points {
-    font-size: 12px;
+    font-size: 14px;
     padding: 15px 0;
+    user-select: none;
 }
 
 
