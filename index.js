@@ -226,22 +226,22 @@ function animate () {
         // check for end game
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
         //* END GAME
-        // if ( dist - enemy.radius - player.radius < 1 ) {
-        //     // reset stuff
-        //     bossSound.stop()
-        //     bossSound.mute()
-        //     gameMusic.stop()
-        //     bombSound.stop()
-        //     gameOverSound.play()
-        //     window.cancelAnimationFrame(animationId)
-        //     modalEl.style.display = 'flex'
-        //     let endScore = scoreBox.innerHTML.split(' ')
-        //     modalScore.innerHTML = endScore[1]
-        //     displayPoints.innerHTML = "Points"
-        //     normalGameBtn.style.display = 'none'
-        //     hardGameBtn.style.display = 'none'
-        //     resetBtn.style.display = 'block'
-        // }
+        if ( dist - enemy.radius - player.radius < 1 ) {
+            // reset stuff
+            bossSound.stop()
+            bossSound.mute()
+            gameMusic.stop()
+            bombSound.stop()
+            gameOverSound.play()
+            window.cancelAnimationFrame(animationId)
+            modalEl.style.display = 'flex'
+            let endScore = scoreBox.innerHTML.split(' ')
+            modalScore.innerHTML = endScore[1]
+            displayPoints.innerHTML = "Points"
+            normalGameBtn.style.display = 'none'
+            hardGameBtn.style.display = 'none'
+            resetBtn.style.display = 'block'
+        }
         // collision detection
         projectiles.forEach( (projectile, projectileIndex) => {
             const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
@@ -328,7 +328,7 @@ function spawnEnemies () {
         } else {
             anglesBoss.x *=6
             anglesBoss.y *=6
-        }//boss movement 
+        }//faster move..
 
         // animate boss after x-number of enemies
         if ( !(enemyCount % bossInterval) ) {
