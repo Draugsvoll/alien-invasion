@@ -1,11 +1,12 @@
 import scoreboard from './scoreboard.js'
 
+//* CANVAS
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
-
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
+//* DOM HOOKS
 const normalGameBtn = document.querySelector('.start-normalgame-btn')
 const hardGameBtn = document.querySelector('.start-hardgame-btn')
 const modalEl = document.querySelector('.modal-container')
@@ -14,6 +15,7 @@ const scoreBox = document.querySelector(".scoreboard")
 const displayPoints = document.querySelector(".points")
 const resetBtn = document.querySelector(".reset")
 
+//* IMAGES
 const imgEnemyPath = 'assets/enemy.png'
 const imgPlayerPath = 'assets/player.png'
 const imgStarPath = 'assets/star.png'
@@ -22,32 +24,20 @@ const enemyObj = new Image()
 const playerObj = new Image()
 const starObj = new Image()
 const bossObj = new Image()
-
-var bossSound;
-var gameMusic;
-var bombSound
-var gunSound;
-var killSound;
-var gameOverSound;
-
 enemyObj.src = imgEnemyPath
 playerObj.src = imgPlayerPath
 starObj.src = imgStarPath
 bossObj.src = imgBossPath
 
-
-// console.log(canvas)
-// console.log(context)
-//console.log('X-cordinate: ',canvas.width)
-//console.log('Y-cordinate: ',canvas.height)
-
-
-
-
 //* SOUNDS
+var bossSound;
+var gameMusic;
+var bombSound
+var gameOverSound
+var gunfireSound
 function sound(src) {
     this.sound = document.createElement("audio");
-    this.sound.volume = 0.2
+    this.sound.volume = 0.25
     this.sound.src = src;
     this.sound.setAttribute("preload", "auto");
     this.sound.setAttribute("controls", "none");
@@ -60,16 +50,23 @@ function sound(src) {
         this.sound.currentTime = 2
         this.sound.play();
     }
+    this.playDelayGun = function(){
+        this.sound.currentTime = 0.450
+        this.sound.play();
+    }
     this.stop = function(){
       this.sound.pause();
       this.sound.currentTime = 0
     }
+    this.mute = function() {
+        this.sound.volume = 0
+    }
   }
   bossSound = new sound("assets/bossIncoming.mp3");
   gameMusic = new sound("assets/music.mp3");
-  //menuMusic = new sound("assets/menuMusic.mp3");
   bombSound = new sound("assets/bomb.mp3");
-
+  gameOverSound = new sound("assets/gameOver.mp3");
+  gunfireSound = new sound("assets/gunfire.mp3");
 
 
 //* PLAYER CLASS
@@ -80,7 +77,6 @@ class Player {
         this.radius = radius
         this.color = color
     }
-
     draw () {
         context.drawImage(playerObj, this.x -66, this.y -55)
     }
@@ -99,7 +95,6 @@ class Enemy {
         this.angles = angles
         this.isBoss = isBoss
     }
-
     draw () {
         context.drawImage(enemyObj, this.x, this.y)
     }
@@ -113,19 +108,15 @@ class Enemy {
 }
 
 
-
-
 //* STARS
 class Star {
     constructor (x) {
         this.x = x
         this.y = 0
     }
-
     draw() {
         context.drawImage(starObj, this.x, this.y)
     }
-
     update() {
         this.y += 25
     }
@@ -143,7 +134,6 @@ class Particle {
         this.color = 'white'
         this.alpha = 1
     }
-
     draw () {
         context.save() // only affect this scope
         context.globalAlpha = this.alpha
@@ -153,7 +143,6 @@ class Particle {
         context.fill()
         context.restore() // finish statement/code
     }
-
     update() {
         this.angles.x *= friction
         this.angles.y *= friction
@@ -162,7 +151,6 @@ class Particle {
         this.alpha -= 0.02
     }
 }
-
 
 
 //* PROJECTILE CLASS
@@ -174,27 +162,23 @@ class Projectile {
         this.color = color
         this.angles = angles
     }
-
     draw () {
         context.beginPath()
         context.arc( this.x, this.y, this.radius, 0, Math.PI * 2, false)
         context.fillStyle = this.color
         context.fill()
     }
-
     update() {
         this.x = this.x + this.angles.x
         this.y = this.y + this.angles.y
     }
 }
 
-
 var projectiles = [ ]
 var enemies = [ ]
 var particles = [ ]
 var stars = [ ]
-var boss = []
-
+ 
 
 //* ANIMATE FUNCTION
 let animationId
@@ -228,7 +212,6 @@ function animate () {
              projectiles.splice( index, 1) 
              }
     })
-   
     // animate enemy
     enemies.forEach( (enemy, index) => {
         enemy.update()
@@ -237,11 +220,16 @@ function animate () {
         } else {
             enemy.draw()
         }
-        //* END GAME
+        // check for end game
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
+        //* END GAME
         if ( dist - enemy.radius - player.radius < 1 ) {
             // reset stuff
+            bossSound.stop()
+            bossSound.mute()
             gameMusic.stop()
+            bombSound.stop()
+            gameOverSound.play()
             window.cancelAnimationFrame(animationId)
             modalEl.style.display = 'flex'
             let endScore = scoreBox.innerHTML.split(' ')
@@ -257,8 +245,7 @@ function animate () {
             // has collided
             if ( dist - enemy.radius - projectile.radius < 1) {
             if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
-
-                // create smaller particles at crash
+                // create crash particles
                 for ( let i=0; i<10; i++) {
                     particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
                 }
@@ -267,7 +254,6 @@ function animate () {
                         projectiles.splice( projectileIndex, 1 )
                         scoreboard.updateScore()
                     },0)
-                
             }
         })
     })
@@ -275,10 +261,11 @@ function animate () {
 
 
 
-
-
 //* MOUSE CLICK LISTENER
 canvas.addEventListener('click', (e) => {
+    gunfireSound.stop()
+    gunfireSound.playDelayGun() 
+    setTimeout(() => {  gunfireSound.stop() }, 200);
     // triangulate x,y cordinates
     const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
     // angles
@@ -291,7 +278,6 @@ canvas.addEventListener('click', (e) => {
 })
 
 
-
 //* SPAWN STARS
 function spawnStars () {
     setInterval( () => {
@@ -302,9 +288,9 @@ function spawnStars () {
 }
 
 
+//* SPAWN ENEMIES
 var bossInterval
 var spawnInterval
-//* SPAWN ENEMIES
 function spawnEnemies () {
     var enemyCount = 0
     setInterval( () => {
@@ -343,48 +329,31 @@ function spawnEnemies () {
 }
 
 
-
- 
-
-
-
-
-
-//* START NORMAL GAME 
-normalGameBtn.addEventListener('click', () => {
-    bossInterval = 5
-    spawnInterval = 1000
+//* INIT NEW GAME
+function initGame () {
     modalEl.style.display = 'none'
-    // clear old game
     projectiles = []
     enemies = []
     scoreBox.innerHTML = 'Score: 0'
     animate()
     spawnEnemies()
     spawnStars()
-
     gameMusic.playDelay()
-//menuMusic.play()
+}
 
-
+//* START NORMAL GAME 
+normalGameBtn.addEventListener('click', () => {
+    bossInterval = 5
+    spawnInterval = 1000
+    initGame()
 })
 
 //* START HARD GAME 
 hardGameBtn.addEventListener('click', () => {
     bossInterval = 10
     spawnInterval = 500
-    modalEl.style.display = 'none'
-    // clear old game
-    projectiles = []
-    enemies = []
-    scoreBox.innerHTML = 'Score: 0'
-    animate()
-    spawnEnemies()
-    spawnStars()
-
-    gameMusic.playDelay()
+    initGame()
 })
-
 
 //* BACK BTN
 resetBtn.addEventListener('click', () => {
