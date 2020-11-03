@@ -236,8 +236,8 @@ function animate () {
             window.cancelAnimationFrame(animationId)
             modalEl.style.display = 'flex'
             let endScore = scoreBox.innerHTML.split(' ')
-            modalScore.innerHTML = endScore[1]
-            displayPoints.innerHTML = "Points"
+            modalScore.innerHTML = 'Game Over'
+            displayPoints.innerHTML = endScore[1] + " Points"
             normalGameBtn.style.display = 'none'
             hardGameBtn.style.display = 'none'
             resetBtn.style.display = 'block'
