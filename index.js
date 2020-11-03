@@ -17,19 +17,62 @@ const resetBtn = document.querySelector(".reset")
 const imgEnemyPath = 'assets/enemy.png'
 const imgPlayerPath = 'assets/player.png'
 const imgStarPath = 'assets/star.png'
+const imgBossPath = 'assets/boss.png'
 const enemyObj = new Image()
 const playerObj = new Image()
 const starObj = new Image()
+const bossObj = new Image()
+
+var bossSound;
+var gameMusic;
+var bombSound
+var gunSound;
+var killSound;
+var gameOverSound;
 
 enemyObj.src = imgEnemyPath
 playerObj.src = imgPlayerPath
 starObj.src = imgStarPath
+bossObj.src = imgBossPath
 
 
 // console.log(canvas)
 // console.log(context)
 //console.log('X-cordinate: ',canvas.width)
 //console.log('Y-cordinate: ',canvas.height)
+
+
+
+
+//* SOUNDS
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.volume = 0.2
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.playDelay = function(){
+        this.sound.currentTime = 2
+        this.sound.play();
+    }
+    this.playDelay5 = function(){
+        this.sound.currentTime = 2
+        this.sound.play();
+    }
+    this.stop = function(){
+      this.sound.pause();
+      this.sound.currentTime = 0
+    }
+  }
+  bossSound = new sound("assets/bossIncoming.mp3");
+  gameMusic = new sound("assets/music.mp3");
+  //menuMusic = new sound("assets/menuMusic.mp3");
+  bombSound = new sound("assets/bomb.mp3");
 
 
 
@@ -43,7 +86,7 @@ class Player {
     }
 
     draw () {
-        context.drawImage(playerObj, this.x -66, this.y -25)
+        context.drawImage(playerObj, this.x -66, this.y -55)
     }
 }
 const x = canvas.width/2
@@ -53,22 +96,26 @@ const player = new Player (x, y, 50, 'white')
 
 //* ENEMEY CLASS
 class Enemy {
-    constructor ( x, y, radius, angles ) {
+    constructor ( x, y, radius, angles, isBoss ) {
         this.x = x
         this.y = y
         this.radius = radius
         this.angles = angles
+        this.isBoss = isBoss
     }
 
     draw () {
         context.drawImage(enemyObj, this.x, this.y)
     }
-
+    drawBoss () {
+        context.drawImage(bossObj, this.x-50, this.y-75)
+    }
     update() {
         this.x = this.x + this.angles.x
         this.y = this.y + this.angles.y
     }
 }
+
 
 
 
@@ -84,7 +131,7 @@ class Star {
     }
 
     update() {
-        this.y += 10
+        this.y += 25
     }
 }
 
@@ -150,6 +197,8 @@ var projectiles = [ ]
 var enemies = [ ]
 var particles = [ ]
 var stars = [ ]
+var boss = []
+
 
 //* ANIMATE FUNCTION
 let animationId
@@ -162,7 +211,7 @@ function animate () {
         star.update()
         star.draw()
     })
-    // animate crash particles
+    // animate crashes
     particles.forEach( (particle, index) => {
         if ( particle.alpha <= 0.1 ) {
             particles.splice(index, 1)
@@ -183,11 +232,15 @@ function animate () {
              projectiles.splice( index, 1) 
              }
     })
+   
     // animate enemy
     enemies.forEach( (enemy, index) => {
         enemy.update()
-        enemy.draw()
-
+        if ( enemy.isBoss === true) {
+            enemy.drawBoss()
+        } else {
+            enemy.draw()
+        }
         // END GAME
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
         if ( dist - enemy.radius - player.radius < 1 ) {
@@ -206,6 +259,8 @@ function animate () {
             const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
             // has collided
             if ( dist - enemy.radius - projectile.radius < 1) {
+            if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
+
                 // create smaller particles at crash
                 for ( let i=0; i<10; i++) {
                     particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
@@ -250,14 +305,18 @@ function spawnStars () {
 }
 
 
-var spawnInterval = 1300
+var bossInterval
+var spawnInterval
 //* SPAWN ENEMIES
 function spawnEnemies () {
+    var enemyCount = 0
     setInterval( () => {
-        const radius = Math.random() * ( 60 - 15 ) + 15
+        enemyCount++
+        var isBoss = false
+        var radius = 55
         var x = Math.random()
         var y = Math.random() 
-        let speed = Math.random() * 4 + 1.5
+        var speed = Math.random() * 4.5 + 1.5
        if ( Math.random() < 0.5 ) {
            x = Math.random() < 0.5 ? 0-radius : canvas.width+radius
            y = Math.random() * canvas.height
@@ -267,18 +326,36 @@ function spawnEnemies () {
        }
                                        // towards the middle minus starting point
         const triangulate = Math.atan2(canvas.height/2 - y, canvas.width/2 - x)
-        const angles = {
+        var angles = {
             x: Math.cos(triangulate) * speed,
             y: Math.sin(triangulate) * speed
         }
-        enemies.push(new Enemy(x, y, 55, angles))
+        var anglesBoss = {
+            x: Math.cos(triangulate) * 9,
+            y: Math.sin(triangulate) * 9
+        }
+        // animate boss after x-number of enemies
+        if ( !(enemyCount % bossInterval) ) {
+            bossSound.playDelay()
+            isBoss = true
+            radius = 70
+            angles = anglesBoss
+        }
+        enemies.push(new Enemy(x, y, radius, angles, isBoss))
     }, spawnInterval)
 }
 
 
 
+ 
+
+
+
+
+
 //* START NORMAL GAME 
 normalGameBtn.addEventListener('click', () => {
+    bossInterval = 5
     spawnInterval = 1000
     modalEl.style.display = 'none'
     // clear old game
@@ -288,10 +365,16 @@ normalGameBtn.addEventListener('click', () => {
     animate()
     spawnEnemies()
     spawnStars()
+
+    gameMusic.playDelay()
+//menuMusic.play()
+
+
 })
 
 //* START HARD GAME 
 hardGameBtn.addEventListener('click', () => {
+    bossInterval = 10
     spawnInterval = 500
     modalEl.style.display = 'none'
     // clear old game
@@ -301,6 +384,8 @@ hardGameBtn.addEventListener('click', () => {
     animate()
     spawnEnemies()
     spawnStars()
+
+    gameMusic.playDelay()
 })
 
 
@@ -308,3 +393,4 @@ hardGameBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => {
     location.reload()
 })
+
