@@ -268,7 +268,7 @@ function animate () {
 canvas.addEventListener('click', (e) => {
     gunfireSound.stop()
     gunfireSound.playDelayGun() 
-    setTimeout(() => {  gunfireSound.stop() }, 200);
+    setTimeout(() => {  gunfireSound.stop() }, 120);
     // triangulate x,y cordinates
     const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
     // angles
