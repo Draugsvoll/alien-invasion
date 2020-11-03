@@ -60,10 +60,6 @@ function sound(src) {
         this.sound.currentTime = 2
         this.sound.play();
     }
-    this.playDelay5 = function(){
-        this.sound.currentTime = 2
-        this.sound.play();
-    }
     this.stop = function(){
       this.sound.pause();
       this.sound.currentTime = 0
@@ -241,10 +237,11 @@ function animate () {
         } else {
             enemy.draw()
         }
-        // END GAME
+        //* END GAME
         const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
         if ( dist - enemy.radius - player.radius < 1 ) {
             // reset stuff
+            gameMusic.stop()
             window.cancelAnimationFrame(animationId)
             modalEl.style.display = 'flex'
             let endScore = scoreBox.innerHTML.split(' ')
