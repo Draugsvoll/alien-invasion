@@ -324,8 +324,8 @@ function spawnEnemies () {
             anglesBoss.x *=8
             anglesBoss.y *=9
         } else {
-            anglesBoss.x *=4
-            anglesBoss.y *=3
+            anglesBoss.x *=5
+            anglesBoss.y *=4
         }//faster move..
 
         // animate boss after x-number of enemies
