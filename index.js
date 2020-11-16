@@ -1,6 +1,5 @@
 import scoreboard from './scoreboard.js'
 
-
 //* CANVAS
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
@@ -290,7 +289,6 @@ function spawnStars () {
         
 }
 
-
 //* SPAWN ENEMIES
 var bossInterval
 var spawnInterval
@@ -326,8 +324,8 @@ function spawnEnemies () {
             anglesBoss.x *=8
             anglesBoss.y *=9
         } else {
-            anglesBoss.x *=6
-            anglesBoss.y *=6
+            anglesBoss.x *=4
+            anglesBoss.y *=3
         }//faster move..
 
         // animate boss after x-number of enemies
