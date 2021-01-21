@@ -1,3 +1,60 @@
+
+    const LEFT_CUTOFF = window.innerWidth / 3
+    const RIGHT_CUTOFF =  (window.innerWidth) - (window.innerWidth / 3)
+    const UP_CUTOFF = window.innerHeight / 2
+    const DOWN_CUTOFF = (window.innerHeight) - (window.innerHeight / 2)
+
+    var barX = window.innerWidth/2 - 100
+    var barY = window.innerHeight/2
+    let bar = document.getElementById('bar')
+    bar.style['left'] = barX + 'px'
+    bar.style['bottom'] = barY + 'px'
+
+    var globalX = window.innerWidth/2
+    var globalY = -500
+
+    // window.saveDataAcrossSessions = true
+    
+    webgazer.setGazeListener(function(data, timestamp) {
+        if (data == null) return;
+        //* left
+        if (data.x < barX+40) {
+                if (barX < 50) return
+                barX -= 15
+                bar.style["left"] = barX + 'px'
+                console.log('LEFT')
+        }
+        //* middle
+        if (data.x >= LEFT_CUTOFF && data.x <= RIGHT_CUTOFF ) {
+            // do nothing
+        }
+        //* right
+        if (data.x > barX+40 ) {
+            if (barX + 100 >= window.innerWidth) return
+                barX += 15
+                bar.style["left"] = barX + 'px'
+                console.log('RIGHT')
+        }
+        //* up
+        // if (data.y <= UP_CUTOFF) {
+        //     if (barY+100 >= window.innerHeight) return
+        //     barY += 15
+        //     bar.style["bottom"] = barY + 'px'
+        //     console.log('UP')
+        // }
+        //* down
+        // if (data.y >= DOWN_CUTOFF) {
+        //     if (barY - 10 <= 0) return
+        //     barY -= 15
+        //     bar.style["bottom"] = barY + 'px'
+        //     console.log('DOWN')
+        // }
+        // console.log(barY)
+        globalX = data.x
+        globalY = data.y
+    }).begin();
+    
+   
 import scoreboard from './scoreboard.js'
 
 //* CANVAS
@@ -22,6 +79,7 @@ const imgStarPath = 'assets/star.png'
 const imgBossPath = 'assets/boss.png'
 const enemyObj = new Image()
 const playerObj = new Image()
+playerObj.style['border'] = "1px solid yellow"
 const starObj = new Image()
 const bossObj = new Image()
 enemyObj.src = imgEnemyPath
@@ -69,6 +127,8 @@ function sound(src) {
   gunfireSound = new sound("assets/gunfire.mp3");
 
 
+
+
 //* PLAYER CLASS
 class Player {
     constructor(x, y, radius, color) {
@@ -78,12 +138,14 @@ class Player {
         this.color = color
     }
     draw () {
-        context.drawImage(playerObj, this.x -66, this.y -55)
+        context.drawImage(playerObj, barX, -barY + 805)
     }
 }
-const x = canvas.width/2
-const y = canvas.height/2
-const player = new Player (x, y, 50, 'white')
+// const x = canvas.width/2
+// const y = canvas.height/2
+const x = globalX
+const y = globalY
+const player = new Player (x, -500, 15, 'white')
 
 
 //* ENEMEY CLASS
@@ -191,27 +253,30 @@ function animate () {
         star.update()
         star.draw()
     })
+
     // animate crashes
-    particles.forEach( (particle, index) => {
-        if ( particle.alpha <= 0.1 ) {
-            particles.splice(index, 1)
-        } else {
-            particle.update()
-            particle.draw() 
-        }
-    })
+    // particles.forEach( (particle, index) => {
+    //     if ( particle.alpha <= 0.1 ) {
+    //         particles.splice(index, 1)
+    //     } else {
+    //         particle.update()
+    //         particle.draw() 
+    //     }
+    // })
+
     // animate projectile
-    projectiles.forEach( (projectile, index) => {
-        projectile.update()
-        projectile.draw()
-        // remove projectile if outside canvas
-        if ( projectile.x + projectile.radius < 0 ||
-             projectile.x - projectile.radius > canvas.width ||
-             projectile.y + projectile.radius < 0 ||
-             projectile.y - projectile.radius > canvas.height) {
-             projectiles.splice( index, 1) 
-             }
-    })
+    // projectiles.forEach( (projectile, index) => {
+    //     projectile.update()
+    //     projectile.draw()
+    //     // remove projectile if outside canvas
+    //     if ( projectile.x + projectile.radius < 0 ||
+    //          projectile.x - projectile.radius > canvas.width ||
+    //          projectile.y + projectile.radius < 0 ||
+    //          projectile.y - projectile.radius > canvas.height) {
+    //          projectiles.splice( index, 1) 
+    //          }
+    // })
+
     // animate enemy
     enemies.forEach( (enemy, index) => {
         enemy.update()
@@ -220,9 +285,11 @@ function animate () {
         } else {
             enemy.draw()
         }
+
         // check for end game
-        const dist = Math.hypot( player.x - enemy.x, player.y - enemy.y)
-        //* END GAME
+        // const dist = Math.hypot( player.x - enemy.x, player.y - (enemy.y+750))
+        const dist = Math.hypot( barX - enemy.x, barY - enemy.y)
+        // //* END GAME
         if ( dist - enemy.radius - player.radius < 1 ) {
             // reset stuff
             bossSound.stop()
@@ -239,23 +306,25 @@ function animate () {
             hardGameBtn.style.display = 'none'
             resetBtn.style.display = 'block'
         }
+
         // collision detection
-        projectiles.forEach( (projectile, projectileIndex) => {
-            const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
-            // has collided
-            if ( dist - enemy.radius - projectile.radius < 1) {
-            if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
-                // create crash particles
-                for ( let i=0; i<10; i++) {
-                    particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
-                }
-                    setTimeout( () => {
-                        enemies.splice( index, 1 )
-                        projectiles.splice( projectileIndex, 1 )
-                        scoreboard.updateScore()
-                    },0)
-            }
-        })
+        // projectiles.forEach( (projectile, projectileIndex) => {
+        //     const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
+        //     // has collided
+        //     if ( dist - enemy.radius - projectile.radius < 1) {
+        //     if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
+        //         // create crash particles
+        //         for ( let i=0; i<10; i++) {
+        //             particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
+        //         }
+        //             setTimeout( () => {
+        //                 enemies.splice( index, 1 )
+        //                 projectiles.splice( projectileIndex, 1 )
+        //                 scoreboard.updateScore()
+        //             },0)
+        //     }
+        // })
+
     })
 }
 
@@ -308,7 +377,7 @@ function spawnEnemies () {
            y = Math.random() < 0.5 ? 0-radius : canvas.height + radius
        }
                                        // towards the middle minus starting point
-        const triangulate = Math.atan2(canvas.height/2 - y, canvas.width/2 - x)
+        const triangulate = Math.atan2(canvas.height/2 - y, 0)
         var angles = {
             x: Math.cos(triangulate) * speed,
             y: Math.sin(triangulate) * speed
@@ -344,7 +413,8 @@ function initGame () {
 //* START NORMAL GAME 
 normalGameBtn.addEventListener('click', () => {
     bossInterval = 5
-    spawnInterval = 1000
+    spawnInterval = 2000
+   
     initGame()
 })
 
