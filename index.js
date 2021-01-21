@@ -18,7 +18,7 @@
     webgazer.setGazeListener(function(data, timestamp) {
         if (data == null) return;
         //* left
-        if (data.x < barX+100) {
+        if (data.x < window.innerWidth/2) {
                 if (barX < 50) return
                 barX -= 15
                 bar.style["left"] = barX + 'px'
@@ -29,7 +29,7 @@
             // do nothing
         }
         //* right
-        if (data.x > barX ) {
+        if (data.x > window.innerWidth/2) {
             if (barX + 100 >= window.innerWidth) return
                 barX += 15
                 bar.style["left"] = barX + 'px'
@@ -79,7 +79,6 @@ const imgStarPath = 'assets/star.png'
 const imgBossPath = 'assets/boss.png'
 const enemyObj = new Image()
 const playerObj = new Image()
-playerObj.style['border'] = "1px solid yellow"
 const starObj = new Image()
 const bossObj = new Image()
 enemyObj.src = imgEnemyPath
@@ -255,14 +254,14 @@ function animate () {
     })
 
     // animate crashes
-    // particles.forEach( (particle, index) => {
-    //     if ( particle.alpha <= 0.1 ) {
-    //         particles.splice(index, 1)
-    //     } else {
-    //         particle.update()
-    //         particle.draw() 
-    //     }
-    // })
+    particles.forEach( (particle, index) => {
+        if ( particle.alpha <= 0.1 ) {
+            particles.splice(index, 1)
+        } else {
+            particle.update()
+            particle.draw() 
+        }
+    })
 
     // animate projectile
     // projectiles.forEach( (projectile, index) => {
@@ -331,20 +330,20 @@ function animate () {
 
 
 //* MOUSE CLICK LISTENER
-canvas.addEventListener('click', (e) => {
-    gunfireSound.stop()
-    gunfireSound.playDelayGun() 
-    setTimeout(() => {  gunfireSound.stop() }, 200);
-    // triangulate x,y cordinates
-    const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
-    // angles
-    const angles = {
-        x: Math.cos(triangulate) * 30,
-        y: Math.sin(triangulate) * 30
-    }
-    const projectile = new Projectile(canvas.width/2, canvas.height/2, 6, 'white', angles )
-    projectiles.push(projectile)
-})
+// canvas.addEventListener('click', (e) => {
+//     gunfireSound.stop()
+//     gunfireSound.playDelayGun() 
+//     setTimeout(() => {  gunfireSound.stop() }, 200);
+//     // triangulate x,y cordinates
+//     const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
+//     // angles
+//     const angles = {
+//         x: Math.cos(triangulate) * 30,
+//         y: Math.sin(triangulate) * 30
+//     }
+//     const projectile = new Projectile(canvas.width/2, canvas.height/2, 6, 'white', angles )
+//     projectiles.push(projectile)
+// })
 
 
 //* SPAWN STARS
@@ -368,7 +367,7 @@ function spawnEnemies () {
         var radius = 55
         var x = Math.random()
         var y = Math.random() 
-        var speed = Math.random() * 4.5 + 1.5
+        var speed = Math.random() * 2 + 2
        if ( Math.random() < 0.5 ) {
            x = Math.random() < 0.5 ? 0-radius : canvas.width+radius
            y = Math.random() * canvas.height
@@ -405,15 +404,15 @@ function initGame () {
     enemies = []
     scoreBox.innerHTML = 'Score: 0'
     animate()
-    spawnEnemies()
+    // spawnEnemies()
     spawnStars()
-    gameMusic.playDelay()
+    // gameMusic.playDelay()
 }
 
 //* START NORMAL GAME 
 normalGameBtn.addEventListener('click', () => {
     bossInterval = 5
-    spawnInterval = 2000
+    spawnInterval = 1500
    
     initGame()
 })

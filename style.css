@@ -45,15 +45,16 @@ canvas {
     background: white;
     margin: auto;
     padding: 50px 35px;
-    width: 600px;
+    width: 700px;
     text-justify: center;
     justify-content: center;
     border-radius: 8px;
 }
 
 button {
-    width: 200px;
-    height: 50px;
+    width: 300px;
+    /* height: 50px; */
+    padding: 1.5rem 0;
     margin: auto;
     background: rgb(54, 155, 189);
     border: none;
@@ -80,12 +81,13 @@ h1 {
 p {
     background: white;
     color:rgb(66, 64, 64);
-    margin: auto;
+    /* margin: auto; */
 }
 
 .points {
-    font-size: 12px;
-    padding: 15px 0;
+    font-size: 12px !important;
+    padding: 15px 0 !important;
+    color:black !important;
 }
 
 
@@ -114,4 +116,53 @@ body {
     position: absolute;
     bottom:10px;
     margin:auto;
+}
+
+.right-box, .left-box {
+    width:200px;
+    height:200px;
+    border-radius: 100%;
+    position:absolute;
+    bottom:20%;
+    background:rgba(0,0,0,0);
+    cursor:pointer;
+    border:none;
+}
+.right-box:hover > p, .left-box:hover > p {
+    color:rgb(104, 148, 193);
+    border:1px solid rgb(104, 148, 193);
+}
+p {
+    margin-left:40px;
+    margin-top:85px;
+    background:rgba(0,0,0,0);
+    color:white;
+    border:none !important;
+}
+
+* {
+    user-select:none;
+}
+.right-box {
+    right:5%;
+}
+.left-box {
+    left:5%;
+}
+* {
+    border:1px solid white;
+}
+
+#webgazerFaceOverlay {
+    background:rgba(0,0,0,0) !important;
+}
+
+#webgazerFaceFeedbackBox {
+    background:rgba(0,0,0,0) !important;
+}
+
+#webgazerGazeDot {
+    width:20px !important;
+    height:20px !important;
+    border:none !important;
 }
