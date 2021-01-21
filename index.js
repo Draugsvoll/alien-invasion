@@ -13,12 +13,12 @@
     var globalX = window.innerWidth/2
     var globalY = -500
 
-    // window.saveDataAcrossSessions = true
+    window.saveDataAcrossSessions = true
     
     webgazer.setGazeListener(function(data, timestamp) {
         if (data == null) return;
         //* left
-        if (data.x < barX+40) {
+        if (data.x < barX+100) {
                 if (barX < 50) return
                 barX -= 15
                 bar.style["left"] = barX + 'px'
@@ -29,7 +29,7 @@
             // do nothing
         }
         //* right
-        if (data.x > barX+40 ) {
+        if (data.x > barX ) {
             if (barX + 100 >= window.innerWidth) return
                 barX += 15
                 bar.style["left"] = barX + 'px'
