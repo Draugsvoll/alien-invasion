@@ -16,23 +16,37 @@
     <div id="bar" class="bar"></div>
 
     <!-- HELP BOXES -->
-    <div class="left-box"><p>Click me to move</p></div>
-    <div class="right-box"><p>Click me to move</p></div>
+    <div class="left-box"><p class="click-left">Click me to move left</p></div>
+    <div class="right-box"><p class="click-right">Click me to move right</p></div>
+
+    <!-- Global Button  -->
+    <button class="start-game">Start Game</button>
 
     <!-- SCORE -->
-    <!-- <div class="scoreboard"></div> -->
+    <div class="scoreboard"></div>
 
-    <!-- MODAL -->
+    <!-- TRAINING MODAL -->
+    <div class="modal-container">
+        <div class="trainig-modal">
+            <p class="text">Mouse-click everywhere to train the AI</p>
+            <p class="text">Practice using ONLY your eyes</p>
+            <p class="text">Shoot with 'space-bar'</p>
+            <button class="start-training-btn">Start</button>
+            <button class="reset hidden">Back</button>
+        </div>
+    </div>
+
+    <!-- GAME MODAL -->
     <div class="modal-container">
             <div class="modal">
                 <h1 class="modal-score">Alien Invasion</h1>
-                <p class="points">Mouse-click to fire at enemies!</p>
+                <p class="text">Move spaceship LEFT & RIGHT using your eyes!</p>
                 <button class="start-normalgame-btn">Train the AI</button>
                 <button class="start-hardgame-btn">Start game</button>
                 <button class="reset hidden">Back</button>
             </div>
     </div>
-    
+
     <!-- CANVAS -->
     <div class="box">
         <canvas class="canvas" id="canvas"></canvas>

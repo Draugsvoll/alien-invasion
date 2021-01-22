@@ -5,13 +5,10 @@
     const DOWN_CUTOFF = (window.innerHeight) - (window.innerHeight / 2)
 
     var barX = window.innerWidth/2 - 100
-    var barY = window.innerHeight/2
+    var barY = window.innerHeight/3
     let bar = document.getElementById('bar')
     bar.style['left'] = barX + 'px'
     bar.style['bottom'] = barY + 'px'
-
-    var globalX = window.innerWidth/2
-    var globalY = -500
 
     window.saveDataAcrossSessions = true
     
@@ -22,7 +19,7 @@
                 if (barX < 50) return
                 barX -= 15
                 bar.style["left"] = barX + 'px'
-                console.log('LEFT')
+                // console.log('LEFT')
         }
         //* middle
         if (data.x >= LEFT_CUTOFF && data.x <= RIGHT_CUTOFF ) {
@@ -33,7 +30,7 @@
             if (barX + 100 >= window.innerWidth) return
                 barX += 15
                 bar.style["left"] = barX + 'px'
-                console.log('RIGHT')
+                // console.log('RIGHT')
         }
         //* up
         // if (data.y <= UP_CUTOFF) {
@@ -50,8 +47,7 @@
         //     console.log('DOWN')
         // }
         // console.log(barY)
-        globalX = data.x
-        globalY = data.y
+        // console.log(data.y)
     }).begin();
     
    
@@ -62,6 +58,8 @@ const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
+canvas.setAttribute("tabindex", 0);
+canvas.focus()
 
 //* DOM HOOKS
 const normalGameBtn = document.querySelector('.start-normalgame-btn')
@@ -71,6 +69,12 @@ const modalScore = document.querySelector('.modal-score')
 const scoreBox = document.querySelector(".scoreboard")
 const displayPoints = document.querySelector(".points")
 const resetBtn = document.querySelector(".reset")
+const leftBox = document.querySelector(".left-box")
+const rightBox = document.querySelector(".right-box")
+const startGameGlobal = document.querySelector(".start-game")
+startGameGlobal.style['display'] = 'none'
+rightBox.style['display'] = 'none'
+leftBox.style['display'] = 'none'
 
 //* IMAGES
 const imgEnemyPath = 'assets/enemy.png'
@@ -142,8 +146,8 @@ class Player {
 }
 // const x = canvas.width/2
 // const y = canvas.height/2
-const x = globalX
-const y = globalY
+const x = window.innerWidth/2
+const y = window.innerWidth/3
 const player = new Player (x, -500, 15, 'white')
 
 
@@ -160,7 +164,7 @@ class Enemy {
         context.drawImage(enemyObj, this.x, this.y)
     }
     drawBoss () {
-        context.drawImage(bossObj, this.x-50, this.y-75)
+        context.drawImage(bossObj, this.x-50, this.y+75)
     }
     update() {
         this.x = this.x + this.angles.x
@@ -264,17 +268,17 @@ function animate () {
     })
 
     // animate projectile
-    // projectiles.forEach( (projectile, index) => {
-    //     projectile.update()
-    //     projectile.draw()
-    //     // remove projectile if outside canvas
-    //     if ( projectile.x + projectile.radius < 0 ||
-    //          projectile.x - projectile.radius > canvas.width ||
-    //          projectile.y + projectile.radius < 0 ||
-    //          projectile.y - projectile.radius > canvas.height) {
-    //          projectiles.splice( index, 1) 
-    //          }
-    // })
+    projectiles.forEach( (projectile, index) => {
+        projectile.update()
+        projectile.draw()
+        // remove projectile if outside canvas
+        if ( projectile.x + projectile.radius < 0 ||
+             projectile.x - projectile.radius > canvas.width ||
+             projectile.y + projectile.radius < 0 ||
+             projectile.y - projectile.radius > canvas.height) {
+             projectiles.splice( index, 1) 
+             }
+    })
 
     // animate enemy
     enemies.forEach( (enemy, index) => {
@@ -286,43 +290,43 @@ function animate () {
         }
 
         // check for end game
-        // const dist = Math.hypot( player.x - enemy.x, player.y - (enemy.y+750))
-        const dist = Math.hypot( barX - enemy.x, barY - enemy.y)
-        // //* END GAME
-        if ( dist - enemy.radius - player.radius < 1 ) {
-            // reset stuff
-            bossSound.stop()
-            bossSound.mute()
-            gameMusic.stop()
-            bombSound.stop()
-            gameOverSound.play()
-            window.cancelAnimationFrame(animationId)
-            modalEl.style.display = 'flex'
-            let endScore = scoreBox.innerHTML.split(' ')
-            modalScore.innerHTML = endScore[1]
-            displayPoints.innerHTML = "Points"
-            normalGameBtn.style.display = 'none'
-            hardGameBtn.style.display = 'none'
-            resetBtn.style.display = 'block'
-        }
+        // const dist = Math.hypot( barX - enemy.x, barY - enemy.y)
+        // // //* END GAME
+        // if ( dist - enemy.radius - player.radius < 1 ) {
+        //     // reset stuff
+        //     clearInterval(0);
+        //     bossSound.stop()
+        //     bossSound.mute()
+        //     gameMusic.stop()
+        //     bombSound.stop()
+        //     gameOverSound.play()
+        //     window.cancelAnimationFrame(animationId)
+        //     modalEl.style.display = 'flex'
+        //     // let endScore = scoreBox.innerHTML.split(' ')
+        //     // modalScore.innerHTML = endScore[1]
+        //     displayPoints.innerHTML = "Points"
+        //     normalGameBtn.style.display = 'none'
+        //     hardGameBtn.style.display = 'none'
+        //     resetBtn.style.display = 'block'
+        // }
 
-        // collision detection
-        // projectiles.forEach( (projectile, projectileIndex) => {
-        //     const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
-        //     // has collided
-        //     if ( dist - enemy.radius - projectile.radius < 1) {
-        //     if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
-        //         // create crash particles
-        //         for ( let i=0; i<10; i++) {
-        //             particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
-        //         }
-        //             setTimeout( () => {
-        //                 enemies.splice( index, 1 )
-        //                 projectiles.splice( projectileIndex, 1 )
-        //                 scoreboard.updateScore()
-        //             },0)
-        //     }
-        // })
+        // gun hit detection
+        projectiles.forEach( (projectile, projectileIndex) => {
+            const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
+            // has collided
+            if ( dist - enemy.radius - projectile.radius < 1) {
+            if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
+                // create crash particles
+                for ( let i=0; i<10; i++) {
+                    particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
+                }
+                    setTimeout( () => {
+                        enemies.splice( index, 1 )
+                        projectiles.splice( projectileIndex, 1 )
+                        scoreboard.updateScore()
+                    },0)
+            }
+        })
 
     })
 }
@@ -330,20 +334,21 @@ function animate () {
 
 
 //* MOUSE CLICK LISTENER
-// canvas.addEventListener('click', (e) => {
-//     gunfireSound.stop()
-//     gunfireSound.playDelayGun() 
-//     setTimeout(() => {  gunfireSound.stop() }, 200);
-//     // triangulate x,y cordinates
-//     const triangulate = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width /2)
-//     // angles
-//     const angles = {
-//         x: Math.cos(triangulate) * 30,
-//         y: Math.sin(triangulate) * 30
-//     }
-//     const projectile = new Projectile(canvas.width/2, canvas.height/2, 6, 'white', angles )
-//     projectiles.push(projectile)
-// })
+canvas.addEventListener('keydown', event => {
+    console.log(event)
+    gunfireSound.stop()
+    gunfireSound.playDelayGun() 
+    setTimeout(() => {  gunfireSound.stop() }, 200);
+    // triangulate x,y cordinates
+    const triangulate = Math.atan2(-258, 0)
+    // angles
+    const angles = {
+        x: Math.cos(triangulate) * 30,
+        y: Math.sin(triangulate) * 30
+    }
+    const projectile = new Projectile(barX+60, window.innerHeight*(2/3)-100, 6, 'white', angles )
+    projectiles.push(projectile)
+})
 
 
 //* SPAWN STARS
@@ -364,19 +369,19 @@ function spawnEnemies () {
     setInterval( () => {
         enemyCount++
         var isBoss = false
-        var radius = 55
+        var radius = 30
         var x = Math.random()
         var y = Math.random() 
         var speed = Math.random() * 2 + 2
        if ( Math.random() < 0.5 ) {
-           x = Math.random() < 0.5 ? 0-radius : canvas.width+radius
+           x = Math.random() < 0.5 ? 0-100 : 0 - 100
            y = Math.random() * canvas.height
        } else {
            x = Math.random() * canvas.width
-           y = Math.random() < 0.5 ? 0-radius : canvas.height + radius
+           y = Math.random() < 0.5 ? 0-100 : 0-100
        }
                                        // towards the middle minus starting point
-        const triangulate = Math.atan2(canvas.height/2 - y, 0)
+        const triangulate = Math.atan2(canvas.height/2 - 0, 0)
         var angles = {
             x: Math.cos(triangulate) * speed,
             y: Math.sin(triangulate) * speed
@@ -387,9 +392,9 @@ function spawnEnemies () {
         }
         // animate boss after x-number of enemies
         if ( !(enemyCount % bossInterval) ) {
-            bossSound.playDelay()
+            // bossSound.playDelay()
             isBoss = true
-            radius = 70
+            radius = 45
             angles = anglesBoss
         }
         enemies.push(new Enemy(x, y, radius, angles, isBoss))
@@ -404,23 +409,27 @@ function initGame () {
     enemies = []
     scoreBox.innerHTML = 'Score: 0'
     animate()
-    // spawnEnemies()
+    spawnEnemies()
     spawnStars()
+    canvas.focus()
     // gameMusic.playDelay()
 }
 
-//* START NORMAL GAME 
+//* START TRAINING
 normalGameBtn.addEventListener('click', () => {
-    bossInterval = 5
-    spawnInterval = 1500
+    leftBox.style['display'] = 'block'
+    rightBox.style['display'] = 'block'
+    startGameGlobal.style['display'] = 'block'
+    bossInterval = 99999999
+    spawnInterval = 99999999
    
     initGame()
 })
 
 //* START HARD GAME 
 hardGameBtn.addEventListener('click', () => {
-    bossInterval = 10
-    spawnInterval = 500
+    bossInterval = 100
+    spawnInterval = 1000
     initGame()
 })
 
