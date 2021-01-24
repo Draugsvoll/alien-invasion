@@ -19,7 +19,7 @@ canvas {
 
 .scoreboard {
     position: absolute;
-    color: white;
+    color: white !important;
     font-size: 24px;
     left: 43%;
     background:rgba(0,0,0,0);
@@ -28,7 +28,7 @@ canvas {
 }
 
 .modal-container {
-    background: rgb(0, 0, 0, 0);
+    background: rgba(255, 255, 255, 0);
     position: fixed;
     width: 100%;
     height: 100%;
@@ -38,10 +38,8 @@ canvas {
     justify-content: center;
     margin: auto;
     text-justify: auto;
-    display:none;
 }
 .modal-container2 {
-    background: rgb(0, 0, 0, 0);
     position: fixed;
     width: 100%;
     height: 100%;
@@ -51,6 +49,7 @@ canvas {
     justify-content: center;
     margin: auto;
     text-justify: auto;
+    z-index:20;
 }
 
 .modal {
@@ -63,10 +62,10 @@ canvas {
     text-justify: center;
     justify-content: center;
     border-radius: 8px;
-    display:none;
+    z-index:140 !important;
 }
 .trainig-modal {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     background: white;
     margin: auto;
@@ -75,17 +74,30 @@ canvas {
     text-justify: center;
     justify-content: center;
     border-radius: 8px;
-    z-index: 10;
+    z-index: 40;
+    margin-top: 150px;
 }
 .trainig-modal > .text{
-    font-size: 20px !important;
-    text-align: left;
-    color:pink;
-    margin-left:50px;
+    font-size: 13px;
+    text-align: justify;
+    margin:auto;
     margin-bottom:35px;
+    z-index:10;
+}
+.step {
+    font-size:22px !important;
+    background:white;
+    margin:auto;
+    margin-bottom:-12px;
+    z-index:20;
 }
 .start-training-btn{
+    display: flex;
     cursor:pointer;
+    margin:auto !important;
+    margin-top:-15px !important;
+    justify-content: center;
+    color:white !important;
 }
 button {
     width: 270px;
@@ -98,6 +110,7 @@ button {
     cursor: pointer !important;
     outline: none;
     font-size: 15px;
+    color:white !important;
     margin-top: 20px;
 }
 
@@ -108,18 +121,16 @@ button:hover {
 h1 {
     margin: auto;
     background: white;
-    color:black;
     font-size: 39px;
     text-justify: center;
 }
 
 .text {
     margin-top:10px;
-    font-size: 12px !important;
+    font-size: 12px;
     text-align: center;
     padding: 15px 0 !important;
     background:white;
-    color:black !important;
 }
 
 img {
@@ -147,44 +158,33 @@ body {
     margin:auto;
 }
 
-.right-box, .left-box {
-    width:200px;
-    height:200px;
-    border-radius: 100%;
+.click-left, .click-right {
     position:absolute;
-    bottom:20%;
-    background:rgba(0,0,0,0);
-    cursor:pointer;
-    border:none;
-}
-.click-left {
+    bottom:33%;
     line-height: 1.3rem;
-    margin-left:40px;
-    margin-bottom:33%;
-    background:rgba(0,0,0,0) !important;
-    border:none !important;
-    color:white;
-}
-.click-right {
-    line-height: 1.3rem;
-    margin-right:40px;
-    margin-bottom:33%;
     background:rgba(0,0,0,0) !important;
     border:none !important;
     color:white !important;
+    font-size: 20px;
+    text-shadow: 2px 2px 2px #1c6478;
+    cursor:pointer;
 }
+.click-left {
+    left:1%;
+}
+.click-right {
+    right:1%;
+}
+
 .click-left:hover, .click-right:hover {
-    color:rgb(144, 198, 248) !important;
+    color:rgb(158, 202, 243) !important;
+    bottom:33.5%;
 }
 
 * {
     user-select:none;
-}
-.right-box {
-    right:5%;
-}
-.left-box {
-    left:5%;
+    /* border:1px solid white; */
+    color:black !important;
 }
 .start-game {
     position: absolute;
@@ -197,16 +197,72 @@ body {
     /* border:1px solid white; */
 }
 
-#webgazerFaceOverlay {
+/* LOADING SCREEN */
+.loader {
+    display:flex;
+    position:absolute;
+    flex-direction:column;
+    height:100%;
+    width:100%;
+    background:rgba(0,0,0,0.9);
+    z-index:100;
+  }
+  .loading {
+    position:absolute;
+    top:45%;
+    color:white !important;
+    left:50%;
+    margin-left:-120px;
+    background:rgba(0,0,0,0);
+    font-size:30px;
+    font-family: 'Andika New Basic';
+  }
+  .spinner {
+     position:absolute;
+    top: 30%;
+    left:50%;
+    margin-left:-50px;
+     height:60px;
+     width:60px;
+     -webkit-animation: rotation .6s infinite linear;
+     -moz-animation: rotation .6s infinite linear;
+     -o-animation: rotation .6s infinite linear;
+     animation: rotation .6s infinite linear;
+     border-left:10px solid rgba(0,174,239,.15);
+     border-right:10px solid rgba(0,174,239,.15);
+     border-bottom:10px solid rgba(0,174,239,.15);
+     border-top:10px solid rgba(0,174,239,.8);
+     border-radius:100%;
+  }
+  @-webkit-keyframes rotation {
+     from {-webkit-transform: rotate(0deg);}
+     to {-webkit-transform: rotate(359deg);}
+  }
+  @-moz-keyframes rotation {
+     from {-moz-transform: rotate(0deg);}
+     to {-moz-transform: rotate(359deg);}
+  }
+  @-o-keyframes rotation {
+     from {-o-transform: rotate(0deg);}
+     to {-o-transform: rotate(359deg);}
+  }
+  @keyframes rotation {
+     from {transform: rotate(0deg);}
+     to {transform: rotate(359deg);}
+  }
+#webgazerFaceOverlay, #webgazerVideoFeed {
     background:rgba(0,0,0,0) !important;
+    z-index:30 !important;
+    position:default !important;
+    border-radius:5px;
 }
 
 #webgazerFaceFeedbackBox {
     background:rgba(0,0,0,0) !important;
+    z-index:30 !important;
+
 }
 
 #webgazerGazeDot {
-    width:25px !important;
-    height:25px !important;
-    border:none !important;
+    visibility:hidden !important;
 }

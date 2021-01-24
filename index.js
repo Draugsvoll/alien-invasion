@@ -3,20 +3,26 @@
     const RIGHT_CUTOFF =  (window.innerWidth) - (window.innerWidth / 3)
     const UP_CUTOFF = window.innerHeight / 2
     const DOWN_CUTOFF = (window.innerHeight) - (window.innerHeight / 2)
+    var WEBCAM_ON = false
 
     var barX = window.innerWidth/2 - 100
     var barY = window.innerHeight/3
     let bar = document.getElementById('bar')
+    let loader = document.getElementById('loader')
     bar.style['left'] = barX + 'px'
     bar.style['bottom'] = barY + 'px'
 
     window.saveDataAcrossSessions = true
-    
+
     webgazer.setGazeListener(function(data, timestamp) {
+        if ( !WEBCAM_ON ) {
+            WEBCAM_ON = true
+            loader.style['display'] = 'none'
+        }
         if (data == null) return;
         //* left
-        if (data.x < window.innerWidth/2) {
-                if (barX < 50) return
+        if (  (data.x < barX-100 ) || (data.x < window.innerWidth*1/4) ) {
+                if (barX < 20) return
                 barX -= 15
                 bar.style["left"] = barX + 'px'
                 // console.log('LEFT')
@@ -26,7 +32,7 @@
             // do nothing
         }
         //* right
-        if (data.x > window.innerWidth/2) {
+        if ( (data.x > barX+255) || (data.x > window.innerWidth*3/4) ) {
             if (barX + 100 >= window.innerWidth) return
                 barX += 15
                 bar.style["left"] = barX + 'px'
@@ -46,20 +52,12 @@
         //     bar.style["bottom"] = barY + 'px'
         //     console.log('DOWN')
         // }
-        // console.log(barY)
-        // console.log(data.y)
     }).begin();
-    
-   
+  
+
 import scoreboard from './scoreboard.js'
 
-//* CANVAS
-const canvas = document.querySelector('canvas')
-const context = canvas.getContext('2d')
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-canvas.setAttribute("tabindex", 0);
-canvas.focus()
+var START_GAME = false
 
 //* DOM HOOKS
 const normalGameBtn = document.querySelector('.start-normalgame-btn')
@@ -69,12 +67,22 @@ const modalScore = document.querySelector('.modal-score')
 const scoreBox = document.querySelector(".scoreboard")
 const displayPoints = document.querySelector(".points")
 const resetBtn = document.querySelector(".reset")
-const leftBox = document.querySelector(".left-box")
-const rightBox = document.querySelector(".right-box")
+const clickLeft = document.querySelector(".click-left")
+const clickRight = document.querySelector(".click-right")
 const startGameGlobal = document.querySelector(".start-game")
-startGameGlobal.style['display'] = 'none'
-rightBox.style['display'] = 'none'
-leftBox.style['display'] = 'none'
+const modalTraining = document.querySelector('.trainig-modal')
+const modalContainer2 = document.querySelector('.modal-container2')
+const startTrainingButton = document.querySelector('.start-training-btn')
+
+
+//* CANVAS
+const canvas = document.querySelector('canvas')
+const context = canvas.getContext('2d')
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+canvas.setAttribute("tabindex", 0);
+canvas.focus()
+
 
 //* IMAGES
 const imgEnemyPath = 'assets/enemy.png'
@@ -131,7 +139,6 @@ function sound(src) {
 
 
 
-
 //* PLAYER CLASS
 class Player {
     constructor(x, y, radius, color) {
@@ -141,14 +148,14 @@ class Player {
         this.color = color
     }
     draw () {
-        context.drawImage(playerObj, barX, -barY + 805)
+        context.drawImage(playerObj, barX, window.innerHeight*2/3)
     }
 }
 // const x = canvas.width/2
 // const y = canvas.height/2
 const x = window.innerWidth/2
 const y = window.innerWidth/3
-const player = new Player (x, -500, 15, 'white')
+const player = new Player (x, window.innerHeight*2/3, 15, 'white')
 
 
 //* ENEMEY CLASS
@@ -211,8 +218,8 @@ class Particle {
     update() {
         this.angles.x *= friction
         this.angles.y *= friction
-        this.x = (this.x + this.angles.x) 
-        this.y = (this.y + this.angles.y) 
+        this.x = (this.x + this.angles.x)
+        this.y = (this.y + this.angles.y)
         this.alpha -= 0.02
     }
 }
@@ -243,7 +250,7 @@ var projectiles = [ ]
 var enemies = [ ]
 var particles = [ ]
 var stars = [ ]
- 
+
 
 //* ANIMATE FUNCTION
 let animationId
@@ -251,6 +258,7 @@ function animate () {
     animationId = requestAnimationFrame(animate)
     context.clearRect(0, 0, canvas.width, canvas.height)
     player.draw()
+
     // draw stars
     stars.forEach( star => {
         star.update()
@@ -263,7 +271,7 @@ function animate () {
             particles.splice(index, 1)
         } else {
             particle.update()
-            particle.draw() 
+            particle.draw()
         }
     })
 
@@ -276,7 +284,7 @@ function animate () {
              projectile.x - projectile.radius > canvas.width ||
              projectile.y + projectile.radius < 0 ||
              projectile.y - projectile.radius > canvas.height) {
-             projectiles.splice( index, 1) 
+             projectiles.splice( index, 1)
              }
     })
 
@@ -315,7 +323,7 @@ function animate () {
             const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
             // has collided
             if ( dist - enemy.radius - projectile.radius < 1) {
-            if ( enemy.isBoss ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
+            if ( WEBCAM_ON ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
                 // create crash particles
                 for ( let i=0; i<10; i++) {
                     particles.push( new Particle(projectile.x, projectile.y, 3, { x: (Math.random() - 0.5)*6, y: (Math.random() - 0.5) *6 }) )
@@ -333,11 +341,12 @@ function animate () {
 
 
 
-//* MOUSE CLICK LISTENER
-canvas.addEventListener('keydown', event => {
-    console.log(event)
+//* KEYBOARD CLICK LISTENER
+canvas.addEventListener("keyup", event => {
+    if (event.code != 'Space') return
+    canvas.focus()
     gunfireSound.stop()
-    gunfireSound.playDelayGun() 
+    gunfireSound.playDelayGun()
     setTimeout(() => {  gunfireSound.stop() }, 200);
     // triangulate x,y cordinates
     const triangulate = Math.atan2(-258, 0)
@@ -346,18 +355,18 @@ canvas.addEventListener('keydown', event => {
         x: Math.cos(triangulate) * 30,
         y: Math.sin(triangulate) * 30
     }
-    const projectile = new Projectile(barX+60, window.innerHeight*(2/3)-100, 6, 'white', angles )
+    const projectile = new Projectile(barX+65, window.innerHeight*(2/3)+20, 6, 'white', angles )
     projectiles.push(projectile)
 })
 
 
 //* SPAWN STARS
 function spawnStars () {
-    setInterval( () => {
-        const x = Math.random() * canvas.width
-        stars.push(new Star(x) )
-    }, 125)
-        
+        setInterval( () => {
+            if ( !START_GAME ) return
+            const x = Math.random() * canvas.width
+            stars.push(new Star(x) )
+        }, 125)
 }
 
 
@@ -371,10 +380,10 @@ function spawnEnemies () {
         var isBoss = false
         var radius = 30
         var x = Math.random()
-        var y = Math.random() 
+        var y = Math.random()
         var speed = Math.random() * 2 + 2
        if ( Math.random() < 0.5 ) {
-           x = Math.random() < 0.5 ? 0-100 : 0 - 100
+           x = Math.random() < 0.5 ? 0-100 : 0-100
            y = Math.random() * canvas.height
        } else {
            x = Math.random() * canvas.width
@@ -394,10 +403,12 @@ function spawnEnemies () {
         if ( !(enemyCount % bossInterval) ) {
             // bossSound.playDelay()
             isBoss = true
-            radius = 45
+            radius = 55
             angles = anglesBoss
         }
-        enemies.push(new Enemy(x, y, radius, angles, isBoss))
+        if ( START_GAME ) {
+            enemies.push(new Enemy(x, y, radius, angles, isBoss))
+        }
     }, spawnInterval)
 }
 
@@ -409,28 +420,53 @@ function initGame () {
     enemies = []
     scoreBox.innerHTML = 'Score: 0'
     animate()
-    spawnEnemies()
     spawnStars()
+    spawnEnemies()
     canvas.focus()
-    // gameMusic.playDelay()
 }
 
-//* START TRAINING
+//* START TRAINING DIALOG
 normalGameBtn.addEventListener('click', () => {
-    leftBox.style['display'] = 'block'
-    rightBox.style['display'] = 'block'
+    modalEl.style['display'] = 'none'
+    modalContainer2.style['display'] = 'block'
+    modalTraining.style['display'] = 'block'
+})
+
+//* START TRAINING
+startTrainingButton.addEventListener('click', () => {
+    clickLeft.style['display'] = 'block'
+    clickRight.style['display'] = 'block'
     startGameGlobal.style['display'] = 'block'
-    bossInterval = 99999999
-    spawnInterval = 99999999
-   
+    modalContainer2.style['display'] = 'none'
+    modalTraining.style['display'] = 'none'
+    bossInterval = 100
+    spawnInterval = 1000
+    canvas.focus()
     initGame()
 })
 
-//* START HARD GAME 
+//* START GAME BUTTON
 hardGameBtn.addEventListener('click', () => {
     bossInterval = 100
     spawnInterval = 1000
+    START_GAME = true
+    gameMusic.playDelay()
+    canvas.focus()
     initGame()
+})
+//* START GAME BUTTON (FROM TRAINING)
+startGameGlobal.addEventListener('click', () => {
+    bossInterval = 100
+    spawnInterval = 1500
+    startGameGlobal.style['display'] = 'none'
+    clickLeft.style['display'] = 'none'
+    clickRight.style['display'] = 'none'
+    START_GAME = true
+    gameMusic.playDelay()
+    canvas.focus()
+
+    // modalEl.style['display'] = 'none'
+    // modalTraining.style['display'] = 'block'
 })
 
 //* BACK BTN
@@ -438,3 +474,10 @@ resetBtn.addEventListener('click', () => {
     location.reload()
 })
 
+//* FOCUS CANVAS
+clickLeft.addEventListener('click', () => {
+    canvas.focus()
+})
+clickRight.addEventListener('click', () => {
+    canvas.focus()
+})

@@ -1,56 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script defer src="https://webgazer.cs.brown.edu/webgazer.js?"></script>
-    <script src="scoreboard.js" type="module"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <script defer src="https://webgazer.cs.brown.edu/webgazer.js?" type="text/javascript"></script>
     <script defer src="index.js" type="module"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script src="scoreboard.js" type="module"></script>
     <title>Space Race</title>
 </head>
-<body>
 
-    <!-- MOVEMENT BAR -->
-    <div id="bar" class="bar"></div>
+    <body>
 
-    <!-- HELP BOXES -->
-    <div class="left-box"><p class="click-left">Click me to move left</p></div>
-    <div class="right-box"><p class="click-right">Click me to move right</p></div>
-
-    <!-- Global Button  -->
-    <button class="start-game">Start Game</button>
-
-    <!-- SCORE -->
-    <div class="scoreboard"></div>
-
-    <!-- TRAINING MODAL -->
-    <div class="modal-container">
-        <div class="trainig-modal">
-            <p class="text">Mouse-click everywhere to train the AI</p>
-            <p class="text">Practice using ONLY your eyes</p>
-            <p class="text">Shoot with 'space-bar'</p>
-            <button class="start-training-btn">Start</button>
-            <button class="reset hidden">Back</button>
+        <!-- LOADING SCREEN -->
+        <div id="loader" class="loader">
+            <div class="spinner"></div>
+            <p class="loading">Loading webcam..</p>
         </div>
-    </div>
 
-    <!-- GAME MODAL -->
-    <div class="modal-container">
+        <!-- MOVEMENT BAR -->
+        <div id="bar" class="bar"></div>
+
+        <!-- HELP BOXES -->
+        <p style='display: none;' class="click-left">Click me <br> to move</p>
+        <p style='display: none;' class="click-right">Click me <br> to move</p>
+
+        <!-- Global Button  -->
+        <button style='display: none;' class="start-game">Start Game</button>
+
+        <!-- SCORE -->
+        <div class="scoreboard"></div>
+
+        <!-- TRAINING MODAL -->
+        <div style='display: none;' class="modal-container2">
+            <div class="trainig-modal">
+                <p class="step">Step 1</p><p class="text"><br> Mouse-click everywhere to train eye-tracking.</p>
+                <p class="step">Step 2</p><p class="text"><br> Move ship LEFT & RIGHT with your eyes</p>
+                <p class="step">Step 3</p><p class="text"><br> Spacebar to shoot</p>
+                <button class="start-training-btn">Go!</button>
+                <button class="reset hidden">Back</button>
+            </div>
+        </div>
+
+        <!-- GAME MODAL -->
+        <div class="modal-container">
             <div class="modal">
                 <h1 class="modal-score">Alien Invasion</h1>
-                <p class="text">Move spaceship LEFT & RIGHT using your eyes!</p>
+                <p class="text">Move spaceship LEFT & RIGHT using your eyes.<br> <br>
+                                Spacebar to shoot aliens.</p>
                 <button class="start-normalgame-btn">Train the AI</button>
                 <button class="start-hardgame-btn">Start game</button>
                 <button class="reset hidden">Back</button>
             </div>
-    </div>
+        </div>
 
-    <!-- CANVAS -->
-    <div class="box">
-        <canvas class="canvas" id="canvas"></canvas>
-    </div>
+        <!-- CANVAS -->
+        <div class="box">
+            <canvas class="canvas" id="canvas"></canvas>
+        </div>
 
-</body>
+    </body>
 </html>
