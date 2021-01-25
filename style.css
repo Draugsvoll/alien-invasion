@@ -26,7 +26,6 @@ canvas {
     margin-top: 10px;
     user-select: none;
 }
-
 .modal-container {
     background: rgba(255, 255, 255, 0);
     position: fixed;
