@@ -8,6 +8,7 @@ function updateScore () {
     scoreboard.innerHTML = 'Score: ' + score
 }
 
+
 export default {
     scoreboard,
     updateScore,

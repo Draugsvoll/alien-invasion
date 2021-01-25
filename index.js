@@ -465,8 +465,6 @@ startGameGlobal.addEventListener('click', () => {
     gameMusic.playDelay()
     canvas.focus()
 
-    // modalEl.style['display'] = 'none'
-    // modalTraining.style['display'] = 'block'
 })
 
 //* BACK BTN
