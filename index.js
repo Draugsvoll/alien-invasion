@@ -21,9 +21,9 @@
         }
         if (data == null) return;
         //* left
-        if (  (data.x < barX-100 ) || (data.x < window.innerWidth*1/4) ) {
+        if (  (data.x < barX-110 ) || (data.x < window.innerWidth*1/4) ) {
                 if (barX < 20) return
-                barX -= 15
+                barX -= 20
                 bar.style["left"] = barX + 'px'
                 // console.log('LEFT')
         }
@@ -34,7 +34,7 @@
         //* right
         if ( (data.x > barX+255) || (data.x > window.innerWidth*3/4) ) {
             if (barX + 100 >= window.innerWidth) return
-                barX += 15
+                barX += 20
                 bar.style["left"] = barX + 'px'
                 // console.log('RIGHT')
         }
