@@ -159,7 +159,7 @@ body {
 
 .click-left, .click-right {
     position:absolute;
-    bottom:33%;
+    bottom:43%;
     line-height: 1.3rem;
     background:rgba(0,0,0,0) !important;
     border:none !important;
@@ -177,7 +177,7 @@ body {
 
 .click-left:hover, .click-right:hover {
     color:rgb(158, 202, 243) !important;
-    bottom:33.5%;
+    bottom:43.5%;
 }
 
 * {

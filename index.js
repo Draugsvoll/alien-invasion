@@ -23,7 +23,7 @@
         //* left
         if (  (data.x < barX-110 ) || (data.x < window.innerWidth*1/4) ) {
                 if (barX < 20) return
-                barX -= 20
+                barX -= 14
                 bar.style["left"] = barX + 'px'
                 // console.log('LEFT')
         }
@@ -34,7 +34,7 @@
         //* right
         if ( (data.x > barX+255) || (data.x > window.innerWidth*3/4) ) {
             if (barX + 100 >= window.innerWidth) return
-                barX += 20
+                barX += 14
                 bar.style["left"] = barX + 'px'
                 // console.log('RIGHT')
         }
@@ -320,7 +320,7 @@ function animate () {
 
         // gun hit detection
         projectiles.forEach( (projectile, projectileIndex) => {
-            const dist = Math.hypot( projectile.x - enemy.x, projectile.y - enemy.y)
+            const dist = Math.hypot( projectile.x - (enemy.x+15), projectile.y - enemy.y)
             // has collided
             if ( dist - enemy.radius - projectile.radius < 1) {
             if ( WEBCAM_ON ) bossSound.stop(), bombSound.play(), setTimeout(() => {  bombSound.stop() }, 1000)
@@ -378,17 +378,17 @@ function spawnEnemies () {
     setInterval( () => {
         enemyCount++
         var isBoss = false
-        var radius = 30
-        var x = Math.random()
-        var y = Math.random()
+        var radius = 45
+        var x = Math.random() * canvas.width*(8/10) + canvas.width*(1/10)
+        var y = 1
         var speed = Math.random() * 2 + 2
-       if ( Math.random() < 0.5 ) {
-           x = Math.random() < 0.5 ? 0-100 : 0-100
-           y = Math.random() * canvas.height
-       } else {
-           x = Math.random() * canvas.width
-           y = Math.random() < 0.5 ? 0-100 : 0-100
-       }
+    //    if ( Math.random() < 0.5 ) {
+    //        x = Math.random() < 0.5 ? 0-100 : 0-100
+    //        y = Math.random() * canvas.height
+    //    } else {
+    //        x = Math.random() * canvas.width
+    //        y = Math.random() < 0.5 ? 0-100 : 0-100
+    //    }
                                        // towards the middle minus starting point
         const triangulate = Math.atan2(canvas.height/2 - 0, 0)
         var angles = {
