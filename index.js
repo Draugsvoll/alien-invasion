@@ -440,7 +440,7 @@ startTrainingButton.addEventListener('click', () => {
     modalContainer2.style['display'] = 'none'
     modalTraining.style['display'] = 'none'
     bossInterval = 100
-    spawnInterval = 1000
+    spawnInterval = 1800
     canvas.focus()
     initGame()
 })
@@ -448,7 +448,7 @@ startTrainingButton.addEventListener('click', () => {
 //* START GAME BUTTON
 hardGameBtn.addEventListener('click', () => {
     bossInterval = 100
-    spawnInterval = 1000
+    spawnInterval = 1800
     START_GAME = true
     gameMusic.playDelay()
     canvas.focus()
@@ -457,7 +457,7 @@ hardGameBtn.addEventListener('click', () => {
 //* START GAME BUTTON (FROM TRAINING)
 startGameGlobal.addEventListener('click', () => {
     bossInterval = 100
-    spawnInterval = 1500
+    spawnInterval = 1800
     startGameGlobal.style['display'] = 'none'
     clickLeft.style['display'] = 'none'
     clickRight.style['display'] = 'none'
