@@ -130,6 +130,8 @@ h1 {
     text-align: center;
     padding: 15px 0 !important;
     background:white;
+    /* max-width:600px; */
+
 }
 
 img {
